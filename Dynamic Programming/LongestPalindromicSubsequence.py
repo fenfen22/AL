@@ -13,7 +13,7 @@ case4: if there are more than 2 characters, and first and last characters are sa
       else L(i,j) = L(i+1,j-1)+2
 """
 
-def LSP(seq, i,j):
+def LPS(seq, i,j):
     # base case, if there is only one character, return 1
     if i == j:
         return 1
@@ -21,10 +21,10 @@ def LSP(seq, i,j):
     if j==i+1 and seq[i]==seq[j]:
         return 2
     if seq[i]!=seq[j]:
-        return max(LSP(seq, i+1,j), LSP(seq,i,j-1))
+        return max(LPS(seq, i+1,j), LPS(seq,i,j-1))
     else:
-        return LSP(seq, i+1,j-1)+2
+        return LPS(seq, i+1,j-1)+2
 
 if __name__ == '__main__':
     seq = "bcadfbbba"
-    print(LSP(seq,0,len(seq)-1))
+    print(LPS(seq,0,len(seq)-1))

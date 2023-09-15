@@ -87,11 +87,16 @@ def SequenceAlignment(string1, string2, p, M, Pdict, A):     # M is a 2D array, 
 
 
 if __name__ == '__main__':
-    string1 = "ACAAGTC"
-    string2 = "CATGT"
-    p = 1                                                    # gap cost
-    A = [[0,1,2,2],[1,0,2,3],[2,2,0,1],[2,3,1,0]]            # initial the penalty matrix
-    Pdict = {"A":0,"C":1,"G":2,"T":3}                        # dictionary for penalty matrix
+    # string1 = "ACAAGTC"
+    # string2 = "CATGT"
+    # p = 1  
+    string1 = "APPLE"
+    string2 = "PAPE"
+    p=2                                                  # gap cost
+    # A = [[0,1,2,2],[1,0,2,3],[2,2,0,1],[2,3,1,0]]            # initial the penalty matrix
+    A = [[0,1,3,1],[1,0,2,1],[3,2,0,2],[1,1,2,0]]
+    # Pdict = {"A":0,"C":1,"G":2,"T":3}                        # dictionary for penalty matrix
+    Pdict = {"A":0,"E":1,"L":2,"P":3} 
     l1= len(string1)
     l2= len(string2)
 

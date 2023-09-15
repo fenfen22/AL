@@ -19,7 +19,8 @@ First formulate the problem recursively:
 2. give a recursve formula for the problem
 
 OPT(i,w) = OPT(i-1, w)          if w < w_i
-OPT(i,w) = max( OPT(i-1,w), w_i + OPT(i-1, w-w_i))
+OPT(i,w) = max( OPT(i-1,w), v_i + OPT(i-1, w-w_i))
+                             ^  ---> be careful!!!
 ------------------------------------------------------------------------------------
 """
 class Items:
@@ -60,14 +61,12 @@ def top_bottom(M,n,W,arr):
 if __name__ == '__main__':
     # List = [[1,2],[6,3],[18,5],[22,6],[28,9]]
     # List = [[7,5],[6,2],[3,3],[1,2]]
-    List = [[1,2],[6,2],[3,3],[7,5]]        # the items don't need to be sorted.
+    List = [[1,2],[6,2],[3,3],[7,5]]        # the items don't need to be sorted. we will generate different M with different input items
     W = 6
     n = len(List)
     arr = []
     for i in List:
         arr.append(Items(i))
-    
-    # print(arr[0].val)
     
     M = [[False] * (W+1) for _ in range(n+1)]                           # Initialize an array M[n+1][W+1]   n+1 rows and W+1 columns
     for j in range(W+1):
@@ -79,5 +78,3 @@ if __name__ == '__main__':
 
     for i in M:
         print(i)
-    
- 
