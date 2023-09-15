@@ -40,7 +40,7 @@ def bottom_up(M,n,W,arr):
             if w < arr[i-1].wei:
                 M[i][w] = M[i-1][w]
             else:
-                M[i][w] = max(M[i-1][w], arr[i-1].wei + M[i-1][w-arr[i-1].wei])
+                M[i][w] = max(M[i-1][w], arr[i-1].val + M[i-1][w-arr[i-1].wei])
     return M[i][w]  
 """
 Top-down:
@@ -50,30 +50,34 @@ Top-down:
 4. remember to save results and check before computing
 """
 def top_bottom(M,n,W,arr):
-    if M[n][W] == False:                                       # if this position is empty, we recusively call this function to get the value of this position
-        if arr[n-1].wei < W:
+    if M[n][W] == False and n-1>=0:                                       # if this position is empty, we recusively call this function to get the value of this position
+        if arr[n-1].wei > W :
             M[n][W] = top_bottom(M,n-1,W,arr)
         else:
-            M[n][W] = max(top_bottom(M,n-1,W,arr), arr[n-1].wei + top_bottom(M,n-1,W-arr[n-1].wei,arr))
+            M[n][W] = max(top_bottom(M,n-1,W,arr), arr[n-1].val + top_bottom(M,n-1,W-arr[n-1].wei,arr))
     return M[n][W]
 
 if __name__ == '__main__':
-    List = [[1,2],[6,3],[18,5],[22,6],[28,9]]
-    W = 12
+    # List = [[1,2],[6,3],[18,5],[22,6],[28,9]]
+    # List = [[7,5],[6,2],[3,3],[1,2]]
+    List = [[1,2],[6,2],[3,3],[7,5]]        # the items don't need to be sorted.
+    W = 6
     n = len(List)
     arr = []
-
     for i in List:
         arr.append(Items(i))
+    
+    # print(arr[0].val)
     
     M = [[False] * (W+1) for _ in range(n+1)]                           # Initialize an array M[n+1][W+1]   n+1 rows and W+1 columns
     for j in range(W+1):
         M[0][j] = 0  
     
-    res1 = bottom_up(M,n,W,arr)                                          # call bottom up function
+    # res1 = bottom_up(M,n,W,arr)                                          # call bottom up function
     res2 = top_bottom(M,n,W,arr)
     print(res2)
-    
-    # print(arr)
-    # print(arr[1].val)
 
+    for i in M:
+        print(i)
+    
+ 
