@@ -1,21 +1,34 @@
 
+
+"""
+Scaling Algorithm:
+Based on edmond_karp algorithm, we introduce a scaling parameter \deta
+Only consider edges with capacity at least \deta in current residual graph
+Start with \deta = "highest power of 2 <= largest capacity out of s"
+When no more augmenting paths in current residual graph, we half \deta 
+Stop when no more augmenting paths in residual graph, whose \deta is 1.
+"""
+
+import sys
 from dataclasses import dataclass
+
+
 
 @dataclass
 class EdgeInfo:
     frm:int
     to:int
-    ind:int
+    ind:int                                                                 # id of this edge
     forward:bool
 
-class DSGraph():
+class DSGraph():                                                            # residual graph
     def __init__(self,n):
         self.adj_list = [[] for _ in range(n)]
         self.flow = []
         self.c = []
     
 
-    def add_edge(self,frm,to,capacity):                                 # store this edge information in the residual graph
+    def add_edge(self,frm,to,capacity):                                     # store this edge information in the residual graph
         self.adj_list[frm].append(EdgeInfo(frm, to, len(self.flow),True))
         self.adj_list[to].append(EdgeInfo(to, frm, len(self.flow),False))
         self.flow.append(0)
@@ -29,7 +42,7 @@ class DSGraph():
             self.flow[edge.ind]-=flow
 
     def traversable(self,edge):
-        return self.left_over_capacity(edge) >0
+        return self.left_over_capacity(edge) > 0
         
 
     def left_over_capacity(self,edge):
@@ -38,6 +51,8 @@ class DSGraph():
         else:
             return self.flow[edge.ind]
     
+
+
 
 def bfs(g,n,source,sink):
     visited = [False for _ in range(n)]
@@ -64,6 +79,21 @@ def bfs(g,n,source,sink):
         return edge_used
     return None
 
+def scaling_algorithm(g,n,source,sink):
+    capacity = 0
+    for edge in g.adj_list[source]:
+        capacity = max(capacity,g.c[edge.ind])
+
+    power = 0
+    while 2**power <= capacity:
+        power += 1
+    deta = 2**(power-1)
+
+    
+
+
+    
+"""
 def edmond_karp(g,n,source,sink):
     while True:
         path = bfs(g,n,source,sink)
@@ -81,15 +111,25 @@ def edmond_karp(g,n,source,sink):
             totoal_flow += g.flow[edge.ind]
     
     return totoal_flow
+"""
+
+
+
 
 n,m = map(int,input().split())
-
 g=DSGraph(n)
+
 for _ in range(m):
     frm,to,c = map(int,input().split())
     frm-=1
     to-=1
     g.add_edge(frm,to,c)
+
+scaling_algorithm(g,n,0,n-1)
+
+
+"""
 print(edmond_karp(g,n,0,n-1))
+"""
 
 
