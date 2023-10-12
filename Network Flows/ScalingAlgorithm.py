@@ -26,6 +26,7 @@ class DSGraph():                                                            # re
         self.adj_list = [[] for _ in range(n)]
         self.flow = []
         self.c = []
+        self.deta = None
     
 
     def add_edge(self,frm,to,capacity):                                     # store this edge information in the residual graph
@@ -42,7 +43,7 @@ class DSGraph():                                                            # re
             self.flow[edge.ind]-=flow
 
     def traversable(self,edge):
-        return self.left_over_capacity(edge) > 0
+        return self.left_over_capacity(edge) >= self.deta                   # we only consider edges with capacity at least current deta
         
 
     def left_over_capacity(self,edge):
@@ -51,8 +52,22 @@ class DSGraph():                                                            # re
         else:
             return self.flow[edge.ind]
     
+    def get_deta(self,source):                                              # initial deta
+        capacity = 0
+        for edge in self.adj_list[source]:
+            capacity = max(capacity,self.c[edge.ind])
 
+        power = 0
+        while 2**power <= capacity:
+            power += 1
+        self.deta = 2**(power-1)
+        return self.deta
 
+    def half_deta(self,deta):                                               # half deta
+        self.deta = deta/2
+        return self.deta
+
+    
 
 def bfs(g,n,source,sink):
     visited = [False for _ in range(n)]
@@ -79,39 +94,25 @@ def bfs(g,n,source,sink):
         return edge_used
     return None
 
+
+
 def scaling_algorithm(g,n,source,sink):
-    capacity = 0
-    for edge in g.adj_list[source]:
-        capacity = max(capacity,g.c[edge.ind])
-
-    power = 0
-    while 2**power <= capacity:
-        power += 1
-    deta = 2**(power-1)
-
-    
-
-
-    
-"""
-def edmond_karp(g,n,source,sink):
-    while True:
+    deta = g.get_deta(0)                                        # get the initial deta based on the largest capacity out of s
+    while deta >= 1:
         path = bfs(g,n,source,sink)
-        if path is None:
-            break
-        flow = g.left_over_capacity(path[0])
-        for edge in path:
-            flow = min(flow,g.left_over_capacity(edge))
-        for edge in path:
-            g.add_flow(edge,flow)
-    
-    totoal_flow = 0
+        if path is None:                                        # if we could not get a path with current deta, we try to half current deta and continue
+            deta = g.half_deta(deta)
+        else:
+            flow = g.left_over_capacity(path[0])
+            for edge in path:
+                flow = min(flow, g.left_over_capacity(edge))
+            for edge in path:
+                g.add_flow(edge,flow)
+    total_flow = 0
     for edge in g.adj_list[source]:
         if edge.forward:
-            totoal_flow += g.flow[edge.ind]
-    
-    return totoal_flow
-"""
+            total_flow += g.flow[edge.ind]
+    return total_flow  
 
 
 
@@ -125,11 +126,7 @@ for _ in range(m):
     to-=1
     g.add_edge(frm,to,c)
 
-scaling_algorithm(g,n,0,n-1)
+print(scaling_algorithm(g,n,0,n-1))
 
-
-"""
-print(edmond_karp(g,n,0,n-1))
-"""
 
 
