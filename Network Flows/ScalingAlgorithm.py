@@ -42,9 +42,11 @@ class DSGraph():                                                            # re
         else:
             self.flow[edge.ind]-=flow
 
-    def traversable(self,edge):
+    def traversable_deta(self,edge):
         return self.left_over_capacity(edge) >= self.deta                   # we only consider edges with capacity at least current deta
         
+    def traversable(self,edge):
+        return self.left_over_capacity(edge) > 0
 
     def left_over_capacity(self,edge):
         if edge.forward:
@@ -74,14 +76,13 @@ def bfs(g,n,source,sink):
     edge_taken = [None for _ in range(n)]
 
     queue = []
-
     visited[source]= True
     queue.append(source)
 
     while queue:
         v = queue.pop(0)
         for edge in g.adj_list[v]:
-            if g.traversable(edge) and visited[edge.to]==False:
+            if g.traversable_deta(edge) and visited[edge.to]==False:
                 edge_taken[edge.to] = edge
                 visited[edge.to]=True
                 queue.append(edge.to)
@@ -95,6 +96,27 @@ def bfs(g,n,source,sink):
     return None
 
 
+# we start from s side, track all nodes that we could reach
+def get_minimumCut_s(g,source):
+    visited = [False for _ in range(n)]
+    edge_taken = [None for _ in range(n)]
+
+    queue = []
+    visited[source]= True
+    queue.append(source)
+
+    while queue:
+        v = queue.pop(0)
+        for edge in g.adj_list[v]:
+            if g.traversable(edge) and visited[edge.to]==False:
+                edge_taken[edge.to] = edge
+                visited[edge.to]=True
+                queue.append(edge.to)
+    vertex_used = []
+    for i,vertex in enumerate(visited):
+        if vertex == True:
+            vertex_used.append(i+1)
+    return vertex_used
 
 def scaling_algorithm(g,n,source,sink):
     deta = g.get_deta(0)                                        # get the initial deta based on the largest capacity out of s
@@ -126,7 +148,10 @@ for _ in range(m):
     to-=1
     g.add_edge(frm,to,c)
 
-print(scaling_algorithm(g,n,0,n-1))
+print("maximum flow of this graph is :", scaling_algorithm(g,n,0,n-1))
+
+print("minimun cut of s side is :", get_minimumCut_s(g,0))
+
 
 
 
